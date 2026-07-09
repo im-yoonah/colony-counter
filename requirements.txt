@@ -1,0 +1,11 @@
+streamlit
+opencv-python-headless
+numpy
+pandas
+altair
+Pillow
+streamlit-cropper
+streamlit-image-coordinates
+ultralytics
+torch
+torchvision
