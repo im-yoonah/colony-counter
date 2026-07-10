@@ -311,7 +311,8 @@ st.markdown("""
 h1 { font-weight: 800 !important; letter-spacing: -1px; color: #0f172a; }
 h3 {
   color: #0f766e !important; font-weight: 700 !important; font-size: 1.15rem !important;
-  padding: 9px 0 9px 21px !important; margin-top: 0.6rem !important;
+  padding: 9px 0 9px 21px !important;
+  margin-top: 0.6rem !important; margin-bottom: 0.7rem !important;
   border-left: 4px solid #0d9488;
   background: linear-gradient(90deg,#f0fdfa,rgba(240,253,250,0));
   border-radius: 0 8px 8px 0;
@@ -400,7 +401,6 @@ with st.sidebar:
 
 # 1) 업로드 ---------------------------------------------------------------
 st.subheader("사진 올리기")
-st.markdown("<div style='height:9px'></div>", unsafe_allow_html=True)
 st.caption("아래 칸에 사진을 **끌어다 놓거나** 업로드 버튼으로 선택하세요. **여러 장** 가능.")
 uploaded_files = st.file_uploader("페트리디시 사진",
                                   type=["jpg", "jpeg", "png", "bmp", "webp"],
@@ -725,20 +725,11 @@ with col_L:
         st.caption("검출된 콜로니 없음")
 with col_R:
     st.markdown("**결과 다운로드**")
-    if EDGE_OK:   # PDF 리포트는 Edge 필요 → 클라우드에선 자동 숨김
-        if st.button("결과 PDF 리포트 만들기", use_container_width=True):
-            with st.spinner("PDF 만드는 중..."):
-                try:
-                    _pdf = html_to_pdf(build_report_html(key_rows, detail_rows, _clean_jpg, _after_jpg,
-                                                         "부유세균 콜로니 카운팅 결과"))
-                    st.session_state.report_pdf = _pdf
-                    st.session_state.report_pdf_name = f"{_base}_리포트.pdf"
-                except Exception as e:
-                    st.error(f"PDF 생성 실패: {e}")
-        if st.session_state.get("report_pdf"):
-            st.download_button("PDF 리포트 내려받기", st.session_state.report_pdf,
-                               file_name=st.session_state.get("report_pdf_name", "리포트.pdf"),
-                               mime="application/pdf", use_container_width=True)
+    _report_html = build_report_html(key_rows, detail_rows, _clean_jpg, _after_jpg,
+                                     "부유세균 콜로니 카운팅 결과")
+    st.download_button("결과 리포트 (표 + 검출 전/후 사진)", _report_html.encode("utf-8"),
+                       file_name=f"{_base}_리포트.html", mime="text/html", use_container_width=True)
+    st.caption("리포트(HTML)를 열고 인쇄(Ctrl+P) → PDF로 저장할 수 있어요")
     st.download_button("검출 후 사진", _marked_png,
                        file_name=f"{_base}_marked.png", mime="image/png", use_container_width=True)
     st.download_button("표 내용(txt)", _report,
